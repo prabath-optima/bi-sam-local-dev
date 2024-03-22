@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  ExtractToken:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: ./src/ExtractToken/
+      Handler: bootstrap
+      Runtime: dotnet8
+
+  GetToken:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/GetToken/
+      Handler: bootstrap        
+      Runtime: dotnet8
+      Events:
+        GetTokenApi:
+          Type: Api
+          Properties:
+            Path: /get-token
+            Method: get
+            RestApiId:
+              Ref: APIResource
+
+  APIResource:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: APIResourceGateway
+      StageName: dev         
