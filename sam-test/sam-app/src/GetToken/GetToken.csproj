@@ -13,6 +13,7 @@
 		<!-- StripSymbols tells the compiler to strip debugging symbols from the final executable if we're on Linux and put them into their own file. 
 		This will greatly reduce the final executable's size.-->
 		<StripSymbols>true</StripSymbols>
+    <JsonSerializerSourceGenerationMode>Metadata</JsonSerializerSourceGenerationMode>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.Core" Version="2.2.0" />

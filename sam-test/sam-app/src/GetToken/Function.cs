@@ -41,27 +41,39 @@ public class Function
 
     public static async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(APIGatewayHttpApiV2ProxyRequest apigProxyEvent, ILambdaContext context)
     {
-
-        var wrapper = JsonSerializer.Deserialize<RequestBodyWrapper>(apigProxyEvent.Body, LambdaFunctionJsonSerializerContext.Default.RequestBodyWrapper);
-        var mfaTokenRequest = wrapper?.MFATokenRequest;
-
-        // Example: Use the deserialized MFATokenRequest object
-        var responseMessage = $"Received MFA token request from {mfaTokenRequest?.SentBy} to {mfaTokenRequest?.ReceivedBy} at {mfaTokenRequest?.RequestedAt}";
-
-        var location = await GetCallingIP();
-        var body = new Dictionary<string, string>
+        // Ensure query string parameters are not null
+        if (apigProxyEvent.QueryStringParameters == null)
         {
-            { "message", responseMessage },
-            { "location", location }
-        };
+            return new APIGatewayHttpApiV2ProxyResponse
+            {
+                Body = "Query string parameters are missing",
+                StatusCode = 400, // Bad Request
+                Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
+            };
+        }
 
+        // Extract query parameters safely
+        apigProxyEvent.QueryStringParameters.TryGetValue("ReceivedBy", out var receivedBy);
+        apigProxyEvent.QueryStringParameters.TryGetValue("SentBy", out var sentBy);
+        apigProxyEvent.QueryStringParameters.TryGetValue("RequestedAt", out var requestedAt);
+
+        // Example: Use the extracted query parameters
+        var responseMessage = $"Received MFA token request from {sentBy} to {receivedBy} at {requestedAt}";
+
+        var body = new Dictionary<string, string>
+    {
+        { "message", responseMessage }
+    };
+
+        // Adjusted serialization call using the source-generated context
         return new APIGatewayHttpApiV2ProxyResponse
         {
-            Body = JsonSerializer.Serialize(body, typeof(Dictionary<string, string>), LambdaFunctionJsonSerializerContext.Default),
+            Body = JsonSerializer.Serialize(body, LambdaFunctionJsonSerializerContext.Default.DictionaryStringString),
             StatusCode = 200,
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
         };
     }
+
 }
 
 // Define the MFATokenRequest class to match the expected JSON structure
