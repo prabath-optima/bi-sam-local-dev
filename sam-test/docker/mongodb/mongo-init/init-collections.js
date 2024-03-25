@@ -17,7 +17,7 @@ if (!db.getCollectionNames().includes('MfaOtp')) {
   // Create MfaOtp collection and insert an initial document
   db.createCollection("MfaOtp");
   db.MfaOtp.insert({
-    Id: "unique-id-123",
+    Id: new ObjectId(),
     Token: "token123",
     ReceivedAt: new Date(),
     ReceivedBy: "user@example.com",
