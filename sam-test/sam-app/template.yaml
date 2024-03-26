@@ -10,7 +10,7 @@ Resources:
       Runtime: dotnet8
       Environment:
         Variables:
-          MONGODB_URI: "mongodb://username:password@http://127.0.0.1:27017/MfaDataStore" 
+          MONGODB_URI: "mongodb://username:password@host.docker.internal:27017/MfaDataStore"
 
   GetToken:
     Type: AWS::Serverless::Function
@@ -20,7 +20,7 @@ Resources:
       Runtime: dotnet8
       Environment:
         Variables:
-          MONGODB_URI: "mongodb://username:password@http://127.0.0.1:27017/MfaDataStore" 
+          MONGODB_URI: "mongodb://username:password@host.docker.internal:27017/MfaDataStore"
       Events:
         GetTokenApi:
           Type: Api

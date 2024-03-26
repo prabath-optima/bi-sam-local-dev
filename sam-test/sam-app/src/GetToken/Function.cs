@@ -10,6 +10,7 @@ using Amazon.Lambda.Serialization.SystemTextJson;
 using System.Text.Json.Serialization;
 using System.IO;
 using System.Text;
+using MongoDB.Driver;
 
 
 namespace MFAService;
@@ -17,6 +18,9 @@ namespace MFAService;
 public class Function
 {
     private static readonly HttpClient client = new HttpClient();
+    private static IMongoDatabase database = null;
+
+    private static readonly string mongoDbConnectionString = Environment.GetEnvironmentVariable("MONGODB_URI");
     
     /// <summary>
     /// The main entry point for the Lambda function.
@@ -39,6 +43,19 @@ public class Function
         return msg.Replace("\n","");
     }
 
+    // Method to establish MongoDB connection
+    private static IMongoDatabase GetDatabase()
+    {
+        if (database == null)
+        {
+            var client = new MongoClient(mongoDbConnectionString);
+            // Assuming your database name is included in the connection string
+            // If not, replace "yourDatabaseName" with your actual database name
+            database = client.GetDatabase("MfaDataStore");
+        }
+        return database;
+    }
+
     public static async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(APIGatewayHttpApiV2ProxyRequest apigProxyEvent, ILambdaContext context)
     {
         // Ensure query string parameters are not null
@@ -59,11 +76,13 @@ public class Function
 
         // Example: Use the extracted query parameters
         var responseMessage = $"Received MFA token request from {sentBy} to {receivedBy} at {requestedAt}";
+        var db = GetDatabase();
+        var dbName = db.DatabaseNamespace;
 
         var body = new Dictionary<string, string>
-    {
-        { "message", responseMessage }
-    };
+        {
+            { "message", responseMessage + "Collections Found:"+ dbName }
+        };
 
         // Adjusted serialization call using the source-generated context
         return new APIGatewayHttpApiV2ProxyResponse
