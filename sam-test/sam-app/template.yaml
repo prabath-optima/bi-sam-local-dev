@@ -3,11 +3,14 @@ Transform: AWS::Serverless-2016-10-31
 
 Resources:
   ExtractToken:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./src/ExtractToken/
       Handler: bootstrap
       Runtime: dotnet8
+      Environment:
+        Variables:
+          MONGODB_URI: "mongodb://username:password@http://127.0.0.1:27017/MfaDataStore" 
 
   GetToken:
     Type: AWS::Serverless::Function
@@ -15,6 +18,9 @@ Resources:
       CodeUri: ./src/GetToken/
       Handler: bootstrap        
       Runtime: dotnet8
+      Environment:
+        Variables:
+          MONGODB_URI: "mongodb://username:password@http://127.0.0.1:27017/MfaDataStore" 
       Events:
         GetTokenApi:
           Type: Api
@@ -28,4 +34,4 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       Name: APIResourceGateway
-      StageName: dev         
+      StageName: dev
