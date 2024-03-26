@@ -20,6 +20,7 @@
     <PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.10.0" />
     <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.0" />
     <PackageReference Include="Amazon.Lambda.APIGatewayEvents" Version="2.7.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
     <PackageReference Include="System.Text.Json" Version="7.0.0" />
     <!-- Include the source generator package -->
   </ItemGroup>
