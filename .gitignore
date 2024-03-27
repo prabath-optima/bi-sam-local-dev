@@ -14,3 +14,16 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+
+# Terraform basic ignores
+.terraform
+**/.terraform/
+*.tfstate*
+.terraform.lock.hcl
+.env
+/.vs/terraform/v16/TestStore/0
+/.vs
+.vscode
+.idea
+**/.pluralith/pluralith.plan.bin
+**/.pluralith/pluralith.state.json
