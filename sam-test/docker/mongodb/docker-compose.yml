@@ -15,4 +15,3 @@ services:
 
 volumes:
   mongodb_data_container:
-

@@ -24,4 +24,9 @@
     <PackageReference Include="System.Text.Json" Version="7.0.0" />
     <!-- Include the source generator package -->
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
+        <Aliases>jsonnet</Aliases>
+    </PackageReference>
+</ItemGroup>
 </Project>

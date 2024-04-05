@@ -18,6 +18,7 @@ Resources:
       CodeUri: ./src/GetToken/
       Handler: bootstrap        
       Runtime: dotnet8
+      Timeout: 60
       Environment:
         Variables:
           MONGODB_URI: "mongodb://username:password@host.docker.internal:27017/MfaDataStore"

@@ -1,4 +1,4 @@
-using System;
+extern alias jsonnet;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
@@ -11,7 +11,14 @@ using System.Text.Json.Serialization;
 using System.IO;
 using System.Text;
 using MongoDB.Driver;
+using MongoDB.Bson;
 
+// Use the jsonnet alias for Newtonsoft.Json types
+using JsonConverter = jsonnet.Newtonsoft.Json.JsonConverter;
+using JsonReader = jsonnet.Newtonsoft.Json.JsonReader;
+using JsonWriter = jsonnet.Newtonsoft.Json.JsonWriter;
+using JsonSerializer = jsonnet.Newtonsoft.Json.JsonSerializer;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace MFAService;
 
@@ -58,36 +65,19 @@ public class Function
 
     public static async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(APIGatewayHttpApiV2ProxyRequest apigProxyEvent, ILambdaContext context)
     {
-        // Ensure query string parameters are not null
-        if (apigProxyEvent.QueryStringParameters == null)
-        {
-            return new APIGatewayHttpApiV2ProxyResponse
-            {
-                Body = "Query string parameters are missing",
-                StatusCode = 400, // Bad Request
-                Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
-            };
-        }
 
-        // Extract query parameters safely
-        apigProxyEvent.QueryStringParameters.TryGetValue("ReceivedBy", out var receivedBy);
-        apigProxyEvent.QueryStringParameters.TryGetValue("SentBy", out var sentBy);
-        apigProxyEvent.QueryStringParameters.TryGetValue("RequestedAt", out var requestedAt);
-
-        // Example: Use the extracted query parameters
-        var responseMessage = $"Received MFA token request from {sentBy} to {receivedBy} at {requestedAt}";
         var db = GetDatabase();
         var dbName = db.DatabaseNamespace;
 
-        var body = new Dictionary<string, string>
-        {
-            { "message", responseMessage + "Collections Found:"+ dbName }
-        };
+        var collection = db.GetCollection<BsonDocument>("MfaOtp");
+        // Define your filter based on the query parameters or some criteria
+        var filter = Builders<BsonDocument>.Filter.Empty; // Example: Empty filter to fetch all documents
 
-        // Adjusted serialization call using the source-generated context
+        var results = await collection.Find(filter).ToListAsync();
+
         return new APIGatewayHttpApiV2ProxyResponse
         {
-            Body = JsonSerializer.Serialize(body, LambdaFunctionJsonSerializerContext.Default.DictionaryStringString),
+            Body = jsonnet.Newtonsoft.Json.JsonConvert.SerializeObject(results),
             StatusCode = 200,
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
         };
