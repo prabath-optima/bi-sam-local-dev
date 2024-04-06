@@ -69,22 +69,20 @@ public class Function
             }
             catch (Exception ex)
             {
-                // Handle different types of exceptions appropriately
                 if (ex is MongoConnectionException)
                 {
                     Console.WriteLine("Error connecting to MongoDB server:");
-                    Console.WriteLine(ex.ToString()); // Log detailed exception information
+                    Console.WriteLine(ex.ToString());
                 }
                 else if (ex is NotSupportedException)
                 {
                     Console.WriteLine("Serializer compatibility issue:");
-                    Console.WriteLine(ex.ToString()); // Log detailed exception information
-                                                      // Consider adding logic to address trimming/AOT issues here (e.g., retry with different settings)
+                    Console.WriteLine(ex.ToString()); 
                 }
                 else
                 {
                     Console.WriteLine("Unexpected error occurred:");
-                    Console.WriteLine(ex.ToString()); // Log detailed exception information
+                    Console.WriteLine(ex.ToString());
                 }
             }
         }
