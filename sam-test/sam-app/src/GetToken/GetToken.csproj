@@ -29,4 +29,8 @@
         <Aliases>jsonnet</Aliases>
     </PackageReference>
 </ItemGroup>
+<ItemGroup>
+  <TrimmerRootDescriptor Include="LinkerConfig.xml" />
+</ItemGroup>
+
 </Project>

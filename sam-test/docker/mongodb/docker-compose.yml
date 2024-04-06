@@ -12,6 +12,13 @@ services:
     volumes:
       - ./mongodb_data_container:/data/db
       - ./mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - mfa-network
 
 volumes:
   mongodb_data_container:
+
+networks:
+  mfa-network:
+    driver: bridge
+

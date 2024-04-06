@@ -1,0 +1,5 @@
+<linker>
+  <assembly fullname="MongoDB.Bson" />
+  <assembly fullname="MongoDB.Driver" />
+  <assembly fullname="MongoDB.Driver.Core" />
+</linker>

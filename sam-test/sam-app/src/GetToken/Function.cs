@@ -28,7 +28,7 @@ public class Function
     private static IMongoDatabase database = null;
 
     private static readonly string mongoDbConnectionString = Environment.GetEnvironmentVariable("MONGODB_URI");
-    
+
     /// <summary>
     /// The main entry point for the Lambda function.
     /// </summary>
@@ -45,9 +45,9 @@ public class Function
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Add("User-Agent", "AWS Lambda .Net Client");
 
-        var msg = await client.GetStringAsync("http://checkip.amazonaws.com/").ConfigureAwait(continueOnCapturedContext:false);
+        var msg = await client.GetStringAsync("http://checkip.amazonaws.com/").ConfigureAwait(continueOnCapturedContext: false);
 
-        return msg.Replace("\n","");
+        return msg.Replace("\n", "");
     }
 
     // Method to establish MongoDB connection
@@ -55,10 +55,38 @@ public class Function
     {
         if (database == null)
         {
-            var client = new MongoClient(mongoDbConnectionString);
-            // Assuming your database name is included in the connection string
-            // If not, replace "yourDatabaseName" with your actual database name
-            database = client.GetDatabase("MfaDataStore");
+            try
+            {
+                // Replace the below connection string with your actual connection string.
+                var connectionString = "mongodb://username:password@mongodb:27017/MfaDataStore?authSource=admin";
+
+                // Create a MongoClient object using the connection string
+                var client = new MongoClient(connectionString);
+                Console.WriteLine($"-----------------------------Attempting to connect using {connectionString}-------------------");
+
+                // Get the database using its name
+                database = client.GetDatabase("MfaDataStore");
+            }
+            catch (Exception ex)
+            {
+                // Handle different types of exceptions appropriately
+                if (ex is MongoConnectionException)
+                {
+                    Console.WriteLine("Error connecting to MongoDB server:");
+                    Console.WriteLine(ex.ToString()); // Log detailed exception information
+                }
+                else if (ex is NotSupportedException)
+                {
+                    Console.WriteLine("Serializer compatibility issue:");
+                    Console.WriteLine(ex.ToString()); // Log detailed exception information
+                                                      // Consider adding logic to address trimming/AOT issues here (e.g., retry with different settings)
+                }
+                else
+                {
+                    Console.WriteLine("Unexpected error occurred:");
+                    Console.WriteLine(ex.ToString()); // Log detailed exception information
+                }
+            }
         }
         return database;
     }
@@ -67,7 +95,7 @@ public class Function
     {
 
         var db = GetDatabase();
-        var dbName = db.DatabaseNamespace;
+        //var dbName = db.DatabaseNamespace;
 
         var collection = db.GetCollection<BsonDocument>("MfaOtp");
         // Define your filter based on the query parameters or some criteria
