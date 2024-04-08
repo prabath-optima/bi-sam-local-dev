@@ -99,7 +99,7 @@ public class Function
         // Define your filter based on the query parameters or some criteria
         var filter = Builders<BsonDocument>.Filter.Empty; // Example: Empty filter to fetch all documents
 
-        var results = await collection.Find(filter).ToListAsync();
+        var results = await collection.Find(filter).FirstOrDefaultAsync();
 
         return new APIGatewayHttpApiV2ProxyResponse
         {
